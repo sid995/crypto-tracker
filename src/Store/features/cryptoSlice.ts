@@ -66,6 +66,9 @@ const cryptoSlice = createSlice({
       state.assets = action.payload;
       state.loading = false;
     },
+    setSelectedAsset: (state, action: PayloadAction<CryptoAsset>) => {
+      state.selectedAsset = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -96,5 +99,5 @@ const cryptoSlice = createSlice({
   },
 });
 
-export const { updateAssetPrice, setAssets } = cryptoSlice.actions;
+export const { updateAssetPrice, setAssets, setSelectedAsset } = cryptoSlice.actions;
 export default cryptoSlice.reducer; 

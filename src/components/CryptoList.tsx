@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import CryptoCard from '@/components/CryptoCard';
+import CryptoRow from '@/components/CryptoRow';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAppDispatch, useAppSelector } from '@/Store/hooks';
-import { setAssets } from '@/Store/features/cryptoSlice';
+import { fetchAssets, setAssets } from '@/Store/features/cryptoSlice';
 import { CryptoAsset } from '@/utilities/types';
 
 export default function CryptoList(
@@ -14,8 +14,10 @@ export default function CryptoList(
   const dispatch = useAppDispatch();
   const { assets, loading, error } = useAppSelector((state) => state.crypto);
   useEffect(() => {
-    if (initialData) {
+    if (initialData && initialData.length > 0) {
       dispatch(setAssets(initialData));
+    } else {
+      dispatch(fetchAssets());
     }
   }, [initialData, dispatch]);
 
@@ -28,10 +30,30 @@ export default function CryptoList(
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {assets.map((asset) => (
-        <CryptoCard key={asset.id} asset={asset} />
-      ))}
+    <div className="overflow-x-auto rounded-lg shadow">
+      <table className="min-w-full bg-white dark:bg-gray-800">
+        <thead>
+          <tr className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+            <th className="py-3 px-4 text-left font-medium">
+              <button className="flex items-center">
+                Rank <span className="ml-1">▼</span>
+              </button>
+            </th>
+            <th className="py-3 px-4 text-left font-medium">Name</th>
+            <th className="py-3 px-4 text-right font-medium">Price</th>
+            <th className="py-3 px-4 text-right font-medium">Market Cap</th>
+            <th className="py-3 px-4 text-right font-medium">VWAP (24Hr)</th>
+            <th className="py-3 px-4 text-right font-medium">Supply</th>
+            <th className="py-3 px-4 text-right font-medium">Volume (24Hr)</th>
+            <th className="py-3 px-4 text-right font-medium">Change (24Hr)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {assets.slice(0, 20).map((asset) => {
+            return <CryptoRow key={asset.id} asset={asset} />
+          })}
+        </tbody>
+      </table>
     </div>
   );
 } 

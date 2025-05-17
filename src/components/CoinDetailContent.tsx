@@ -3,33 +3,42 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/Store/hooks';
-import { fetchAssetById, updateAssetPrice } from '@/Store/features/cryptoSlice';
+import { setSelectedAsset } from '@/Store/features/cryptoSlice';
 import { CryptoAsset } from '@/utilities/types';
 import PriceTicker from '@/components/PriceTicker';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { formatLargeNumber, formatPercentage } from '@/utilities/utils';
+import MarketInfo from './MarketInfo';
 
 interface CoinDetailContentProps {
-  coinId: string;
   data: CryptoAsset;
 }
 
-export default function CoinDetailContent({ coinId, data }: CoinDetailContentProps) {
-  console.log("Coin Detail Content", data);
+export default function CoinDetailContent({ data: initialData }: CoinDetailContentProps) {
   const dispatch = useAppDispatch();
-  const { selectedAsset: coin, loading, error } = useAppSelector((state) => state.crypto);
+  const { selectedAsset: coin, error } = useAppSelector((state) => state.crypto);
 
   useEffect(() => {
-    dispatch(fetchAssetById(coinId));
-  }, [coinId, dispatch]);
+    if (initialData && initialData?.id) {
+      dispatch(setSelectedAsset(initialData));
+    }
+  }, [initialData, dispatch]);
 
-  const handlePriceUpdate = (updatedAsset: CryptoAsset) => {
-    dispatch(updateAssetPrice(updatedAsset));
-  };
+  useEffect(() => {
+    dispatch(setSelectedAsset(initialData));
 
-  if (loading && !coin) {
-    return <LoadingSpinner />;
-  }
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/coin/${initialData.id}/api`);
+        const result = await response.json();
+        dispatch(setSelectedAsset(result.data.data));
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+      }
+    };
+
+    const interval = setInterval(fetchData, 5000);
+
+    return () => clearInterval(interval);
+  }, [initialData, dispatch]);
 
   if (error) {
     return <div className="text-red-500 p-4">Error: {error}</div>;
@@ -38,8 +47,6 @@ export default function CoinDetailContent({ coinId, data }: CoinDetailContentPro
   if (!coin) {
     return <div className="text-red-500 p-4">Asset not found</div>;
   }
-
-  const isPositive = parseFloat(coin.changePercent24Hr) >= 0;
 
   return (
     <div className="space-y-8">
@@ -61,47 +68,11 @@ export default function CoinDetailContent({ coinId, data }: CoinDetailContentPro
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <PriceTicker asset={coin} onUpdate={handlePriceUpdate} />
+          <PriceTicker />
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Market Stats</h2>
-
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span className="text-gray-500 dark:text-gray-400">Market Cap</span>
-              <span className="font-medium">${formatLargeNumber(coin.marketCapUsd)}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-gray-500 dark:text-gray-400">24h Volume</span>
-              <span className="font-medium">${formatLargeNumber(coin.volumeUsd24Hr)}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-gray-500 dark:text-gray-400">24h Change</span>
-              <span className={`font-medium ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                {formatPercentage(coin.changePercent24Hr)}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-gray-500 dark:text-gray-400">Supply</span>
-              <span className="font-medium">{formatLargeNumber(coin.supply)} {coin.symbol}</span>
-            </div>
-
-            {coin.maxSupply && (
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Max Supply</span>
-                <span className="font-medium">{formatLargeNumber(coin.maxSupply)} {coin.symbol}</span>
-              </div>
-            )}
-
-            <div className="flex justify-between">
-              <span className="text-gray-500 dark:text-gray-400">Rank</span>
-              <span className="font-medium">#{coin.rank}</span>
-            </div>
-          </div>
+        <div>
+          <MarketInfo />
         </div>
       </div>
 
