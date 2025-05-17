@@ -1,6 +1,5 @@
 'use client';
 
-// import Link from 'next/link';
 import { CryptoAsset } from '@/utilities/types';
 import { formatPrice, formatPercentage, formatLargeNumber } from '@/utilities/utils';
 import { useRouter } from 'next/navigation';
@@ -9,7 +8,7 @@ interface CryptoRowProps {
   asset: CryptoAsset;
 }
 
-export default function CryptoRow({ asset }: CryptoRowProps) {
+export function CryptoRow({ asset }: CryptoRowProps) {
   const router = useRouter();
   const isPositive = parseFloat(asset.changePercent24Hr) >= 0;
 
@@ -19,7 +18,7 @@ export default function CryptoRow({ asset }: CryptoRowProps) {
 
   return (
     <tr
-      className={`cursor-pointer border-t border-gray-200 text-gray-700 hover:text-white dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 bg-gray-50 dark:bg-gray-750`}
+      className={`cursor-pointer border-t border-gray-200 text-gray-700 dark:border-gray-700 hover:bg-gray-100 bg-gray-50 dark:bg-gray-750`}
       onClick={handleRowClick}
     >
       <td className="py-4 px-4">{asset.rank}</td>
@@ -47,4 +46,4 @@ export default function CryptoRow({ asset }: CryptoRowProps) {
       </td>
     </tr>
   );
-} 
+}

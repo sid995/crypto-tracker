@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import CryptoRow from '@/components/CryptoRow';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { CryptoRow } from '@/components/CryptoRow';
 import { useAppDispatch, useAppSelector } from '@/Store/hooks';
 import { fetchAssets, setAssets } from '@/Store/features/cryptoSlice';
 import { CryptoAsset } from '@/utilities/types';
@@ -12,18 +11,21 @@ export default function CryptoList(
     { initialData: CryptoAsset[] }
 ) {
   const dispatch = useAppDispatch();
-  const { assets, loading, error } = useAppSelector((state) => state.crypto);
+  const { assets, error } = useAppSelector((state) => state.crypto);
+
   useEffect(() => {
     if (initialData && initialData.length > 0) {
       dispatch(setAssets(initialData));
-    } else {
+    } else if (!initialData || initialData.length === 0) {
       dispatch(fetchAssets());
     }
-  }, [initialData, dispatch]);
 
-  if (loading && assets.length === 0) {
-    return <LoadingSpinner />;
-  }
+    const intervalId = setInterval(() => {
+      dispatch(fetchAssets());
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [initialData, dispatch]);
 
   if (error) {
     return <div className="text-red-500 p-4">Error: {error}</div>;
@@ -49,7 +51,7 @@ export default function CryptoList(
           </tr>
         </thead>
         <tbody>
-          {assets.slice(0, 20).map((asset) => {
+          {assets.length > 0 && assets.map((asset) => {
             return <CryptoRow key={asset.id} asset={asset} />
           })}
         </tbody>

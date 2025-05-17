@@ -18,13 +18,10 @@ const initialState: CryptoState = {
 export const fetchAssets = createAsyncThunk(
   'crypto/fetchAssets',
   async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets?limit=20`, {
       headers: {
         'accept': 'application/json',
-        'authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`,
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`,
       }
     });
     const data = await response.json();
@@ -38,7 +35,7 @@ export const fetchAssetById = createAsyncThunk(
     const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets/${slug}`, {
       headers: {
         'accept': 'application/json',
-        'authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`
       }
     });
     const data = await response.json();

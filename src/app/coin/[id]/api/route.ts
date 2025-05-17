@@ -8,7 +8,7 @@ export async function GET(
   const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets/${id}`, {
     headers: {
       'accept': 'application/json',
-      'authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`
+      'Authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`
     }
   });
   const data = await response.json();
