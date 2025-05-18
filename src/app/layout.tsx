@@ -25,21 +25,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-
-      <body className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-        <Script
-          id="theme-toggle"
-          strategy="beforeInteractive"
-        >
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script id="theme-init" strategy="beforeInteractive">
           {`
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-              document.documentElement.classList.add('dark')
-            } else {
-              document.documentElement.classList.remove('dark')
+            try {
+              let isDark = false;
+              if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                isDark = true;
+              }
+              document.documentElement.classList.toggle('dark', isDark);
+            } catch (e) {
+              // Handle any errors that might occur during theme initialization
+              console.error('Error initializing theme:', e);
             }
           `}
         </Script>
+      </head>
+      <body className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>

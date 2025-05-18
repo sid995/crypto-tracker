@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { setTheme } from '@/libs/theme';
 
 export default function ThemeToggle() {
-  const [theme, setThemeState] = useState<'light' | 'dark' | undefined>(undefined);
+  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const savedTheme = localStorage.theme;
-    const isDark = savedTheme === 'dark' ||
-      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setMounted(true);
+    const isDark = document.documentElement.classList.contains('dark');
     setThemeState(isDark ? 'dark' : 'light');
   }, []);
 
@@ -19,7 +19,16 @@ export default function ThemeToggle() {
     setTheme(newTheme);
   };
 
-  if (theme === undefined) return null;
+  if (!mounted) {
+    return (
+      <button
+        className="cursor-pointer p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700"
+        aria-label="Loading theme toggle"
+      >
+        <div className="w-6 h-6" />
+      </button>
+    );
+  }
 
   return (
     <button

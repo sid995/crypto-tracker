@@ -1,20 +1,23 @@
 import Header from '@/components/Header';
 import CoinDetailContent from '@/components/CoinDetailContent';
 import { CryptoAsset } from '@/libs/types';
+import { getBaseUrl } from '@/libs/getBaseUrl';
 
 export const revalidate = 5;
 
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api`);
+  const baseUrl = await getBaseUrl();
+  const response = await fetch(`${baseUrl}/api`);
   const { data: { data } } = await response.json();
   return data.map((asset: CryptoAsset) => ({ id: asset.id }));
 }
 
 export default async function CoinPage({ params }: { params: { id: string } }) {
   const { id } = await params;
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/coin/${id}/api`, {
+  const baseUrl = await getBaseUrl();
+  const response = await fetch(`${baseUrl}/coin/${id}/api`, {
     next: { revalidate }
   });
 
