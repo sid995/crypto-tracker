@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setSelectedAsset } from '@/store/features/cryptoSlice';
 import { CryptoAsset } from '@/libs/types';
 import PriceTicker from '@/components/PriceTicker';
 import MarketInfo from './MarketInfo';
-import Image from 'next/image';
 
 interface CoinDetailContentProps {
   data: CryptoAsset;
@@ -16,7 +15,6 @@ interface CoinDetailContentProps {
 export default function CoinDetailContent({ data: initialData }: CoinDetailContentProps) {
   const dispatch = useAppDispatch();
   const { selectedAsset: coin, error } = useAppSelector((state) => state.crypto);
-  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (initialData && initialData?.id) {
@@ -54,19 +52,6 @@ export default function CoinDetailContent({ data: initialData }: CoinDetailConte
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4 mb-4 sm:mb-0">
-
-          {!imageError ? (
-            <div className="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-full">
-              <Image
-                src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
-                alt={coin.symbol}
-                className="rounded-full"
-                width={32}
-                height={32}
-                onError={() => setImageError(true)}
-              />
-            </div>
-          ) : null}
           <h1 className="text-3xl font-bold">{coin.name}</h1>
           <span className="text-gray-500 dark:text-gray-400">{coin.symbol}</span>
         </div>

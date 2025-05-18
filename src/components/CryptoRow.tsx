@@ -4,7 +4,6 @@ import { selectAssetById } from '@/store/features/cryptoSlice';
 import { useAppSelector } from '@/store/hooks';
 import { formatPrice, formatPercentage, formatLargeNumber } from '@/libs/utils';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 
@@ -15,7 +14,6 @@ interface CryptoRowProps {
 export const CryptoRow = ({ id }: CryptoRowProps) => {
   const asset = useAppSelector(s => selectAssetById(s, id))
   const router = useRouter()
-  const [imageError, setImageError] = useState(false);
 
   const [flash, setFlash] = useState<'up' | 'down' | null>(null)
   const prev = useRef<number | undefined>(undefined)
@@ -52,20 +50,6 @@ export const CryptoRow = ({ id }: CryptoRowProps) => {
       <td className="py-4 px-4">{asset.rank}</td>
       <td className="py-4 px-4">
         <div className="flex items-center">
-          <div className={`relative w-8 h-8 flex items-center justify-center rounded-full mr-3 ${!imageError ? "bg-gray-800" : ""}`}>
-            {imageError ? (
-              <Image
-                src={`https://assets.coincap.io/assets/icons/${asset.symbol.toLowerCase()}@2x.png`}
-                alt={asset.symbol}
-                className="rounded-full"
-                width={32}
-                height={32}
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <span className="text-xs font-medium text-gray-200">{asset.symbol.slice(0, 3)}</span>
-            )}
-          </div>
           <div>
             <div className="font-medium">{asset.name}</div>
             <div className="text-xs text-gray-500 dark:text-gray-600">{asset.symbol}</div>
