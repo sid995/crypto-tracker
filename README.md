@@ -2,6 +2,10 @@
 
 A real-time cryptocurrency tracking application built with Next.js, Redux Toolkit, and Tailwind CSS. The application provides live updates of cryptocurrency prices, market caps, and other key metrics with a beautiful, responsive UI that supports both light and dark modes.
 
+## Live Link
+
+Check the demo here: [https://crypto-tracker-eta-lake.vercel.app/](https://crypto-tracker-eta-lake.vercel.app/)
+
 ## Features
 
 - Real-time cryptocurrency price updates (5-second intervals)
