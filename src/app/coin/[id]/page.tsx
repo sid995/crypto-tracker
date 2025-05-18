@@ -1,17 +1,14 @@
 import Header from '@/components/Header';
 import CoinDetailContent from '@/components/CoinDetailContent';
-import { } from '@/libs/types';
-import { getBaseUrl } from '@/libs/getBaseUrl';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 5;
 
 export default async function CoinPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const baseUrl = await getBaseUrl();
 
   try {
-    const response = await fetch(`${baseUrl}/coin/${id}/api`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/coin/${id}/api`, {
       next: { revalidate }
     });
 

@@ -29,7 +29,7 @@ export default function CoinDetailContent({ data: initialData }: CoinDetailConte
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`/coin/${initialData.id}/api`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/coin/${initialData.id}/api`);
         const result = await response.json();
         dispatch(setSelectedAsset(result.data.data));
       } catch (error) {

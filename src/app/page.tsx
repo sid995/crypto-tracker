@@ -1,13 +1,11 @@
 import Header from '@/components/Header';
 import CryptoList from '@/components/CryptoList';
-import { getBaseUrl } from '@/libs/getBaseUrl';
 
 export const revalidate = 0;
 
 export default async function HomePage() {
   try {
-    const baseUrl = await getBaseUrl();
-    const response = await fetch(`${baseUrl}/api`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch data: ${response.status}`);
