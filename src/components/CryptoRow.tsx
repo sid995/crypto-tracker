@@ -1,33 +1,62 @@
 'use client';
 
-import { CryptoAsset } from '@/utilities/types';
+import { selectAssetById } from '@/Store/features/cryptoSlice';
+import { useAppSelector } from '@/Store/hooks';
 import { formatPrice, formatPercentage, formatLargeNumber } from '@/utilities/utils';
 import { useRouter } from 'next/navigation';
+import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface CryptoRowProps {
-  asset: CryptoAsset;
+  id: string;
 }
 
-export function CryptoRow({ asset }: CryptoRowProps) {
-  const router = useRouter();
-  const isPositive = parseFloat(asset.changePercent24Hr) >= 0;
+export const CryptoRow = ({ id }: CryptoRowProps) => {
+  const asset = useAppSelector(s => selectAssetById(s, id))
+  const router = useRouter()
 
-  const handleRowClick = () => {
-    router.push(`/coin/${asset.id}`);
-  };
+  const [flash, setFlash] = useState<'up' | 'down' | null>(null)
+  const prev = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    if (!asset) return
+    if (prev.current !== undefined) {
+      if (parseFloat(asset.priceUsd) > prev.current) setFlash('up')
+      else if (parseFloat(asset.priceUsd) < prev.current) setFlash('down')
+    }
+    prev.current = parseFloat(asset.priceUsd)
+    if (flash) {
+      const t = setTimeout(() => setFlash(null), 1_000)
+      return () => clearTimeout(t)
+    }
+  }, [asset, flash])
+
+  if (!asset) return null
+
+  const isPositive = parseFloat(asset.changePercent24Hr) >= 0
+
+  const priceClass =
+    flash === 'up'
+      ? 'bg-green-200'
+      : flash === 'down'
+        ? 'bg-red-200'
+        : 'bg-gray-100'
 
   return (
     <tr
-      className={`cursor-pointer border-t border-gray-200 text-gray-700 dark:border-gray-700 hover:bg-gray-100 bg-gray-50 dark:bg-gray-750`}
-      onClick={handleRowClick}
+      className={`cursor-pointer text-gray-900 border-t border-gray-200 hover:bg-gray-300 ${priceClass} transition-colors duration-300`}
+      onClick={() => router.push(`/coin/${asset.id}`)}
     >
       <td className="py-4 px-4">{asset.rank}</td>
       <td className="py-4 px-4">
-        {/* https://assets.coincap.io/assets/icons/btc2@2x.png */}
-
         <div className="flex items-center">
-          <div className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-full mr-3">
-            <span className="font-medium text-sm text-white">{asset.symbol.charAt(0)}</span>
+          <div className="w-8 h-8 flex items-center justify-center rounded-full mr-3">
+            <img
+              src={`https://assets.coincap.io/assets/icons/${asset.symbol.toLowerCase()}@2x.png`}
+              alt={asset.symbol}
+              className="w-8 h-8 rounded-full"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
           </div>
           <div>
             <div className="font-medium">{asset.name}</div>
@@ -46,4 +75,6 @@ export function CryptoRow({ asset }: CryptoRowProps) {
       </td>
     </tr>
   );
-}
+};
+
+CryptoRow.displayName = 'CryptoRow';

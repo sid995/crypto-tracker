@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { CryptoRow } from '@/components/CryptoRow';
 import { useAppDispatch, useAppSelector } from '@/Store/hooks';
-import { fetchAssets, setAssets } from '@/Store/features/cryptoSlice';
+import { fetchAssets, selectAssets, setAssets } from '@/Store/features/cryptoSlice';
 import { CryptoAsset } from '@/utilities/types';
 
 export default function CryptoList(
@@ -11,21 +11,22 @@ export default function CryptoList(
     { initialData: CryptoAsset[] }
 ) {
   const dispatch = useAppDispatch();
-  const { assets, error } = useAppSelector((state) => state.crypto);
+  const assets = useAppSelector(selectAssets)
+  const error = useAppSelector(state => state.crypto.error)
 
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
-      dispatch(setAssets(initialData));
-    } else if (!initialData || initialData.length === 0) {
-      dispatch(fetchAssets());
+    if (initialData?.length) {
+      dispatch(setAssets(initialData))
+    } else {
+      dispatch(fetchAssets())
     }
 
     const intervalId = setInterval(() => {
-      dispatch(fetchAssets());
-    }, 5000);
+      dispatch(fetchAssets())
+    }, 5000)
 
-    return () => clearInterval(intervalId);
-  }, [initialData, dispatch]);
+    return () => clearInterval(intervalId)
+  }, [initialData, dispatch])
 
   if (error) {
     return <div className="text-red-500 p-4">Error: {error}</div>;
@@ -51,8 +52,8 @@ export default function CryptoList(
           </tr>
         </thead>
         <tbody>
-          {assets.length > 0 && assets.map((asset) => {
-            return <CryptoRow key={asset.id} asset={asset} />
+          {assets.length > 0 && assets.map((asset: CryptoAsset) => {
+            return <CryptoRow key={asset.id} id={asset.id} />
           })}
         </tbody>
       </table>

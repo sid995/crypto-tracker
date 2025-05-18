@@ -52,8 +52,14 @@ export default function CoinDetailContent({ data: initialData }: CoinDetailConte
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4 mb-4 sm:mb-0">
+
           <div className="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-full">
-            <span className="font-bold text-lg">{coin.symbol}</span>
+            <img
+              src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
+              alt={coin.symbol}
+              className="w-8 h-8 rounded-full"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
           </div>
           <h1 className="text-3xl font-bold">{coin.name}</h1>
           <span className="text-gray-500 dark:text-gray-400">{coin.symbol}</span>
