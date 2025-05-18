@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { formatPrice, formatPercentage } from '@/utilities/utils';
-import { useAppSelector } from '@/Store/hooks';
+import { useAppSelector } from '@/store/hooks';
 
 
 export default function PriceTicker() {

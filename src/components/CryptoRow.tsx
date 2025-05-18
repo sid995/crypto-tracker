@@ -1,7 +1,7 @@
 'use client';
 
-import { selectAssetById } from '@/Store/features/cryptoSlice';
-import { useAppSelector } from '@/Store/hooks';
+import { selectAssetById } from '@/store/features/cryptoSlice';
+import { useAppSelector } from '@/store/hooks';
 import { formatPrice, formatPercentage, formatLargeNumber } from '@/utilities/utils';
 import { useRouter } from 'next/navigation';
 import React from 'react';

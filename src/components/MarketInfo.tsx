@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/Store/hooks";
+import { useAppSelector } from "@/store/hooks";
 import { CryptoAsset } from "@/utilities/types";
 import { formatLargeNumber, formatPercentage } from "@/utilities/utils";
 

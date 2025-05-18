@@ -2,9 +2,10 @@
 
 import { useEffect } from 'react';
 import { CryptoRow } from '@/components/CryptoRow';
-import { useAppDispatch, useAppSelector } from '@/Store/hooks';
-import { fetchAssets, selectAssets, setAssets } from '@/Store/features/cryptoSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchAssets, selectAssets, setAssets } from '@/store/features/cryptoSlice';
 import { CryptoAsset } from '@/utilities/types';
+import { RootState } from '@/store/store';
 
 export default function CryptoList(
   { initialData }:
@@ -12,7 +13,7 @@ export default function CryptoList(
 ) {
   const dispatch = useAppDispatch();
   const assets = useAppSelector(selectAssets)
-  const error = useAppSelector(state => state.crypto.error)
+  const error = useAppSelector((state: RootState) => state.crypto.error)
 
   useEffect(() => {
     if (initialData?.length) {

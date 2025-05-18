@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { useAppDispatch, useAppSelector } from '@/Store/hooks';
-import { setSelectedAsset } from '@/Store/features/cryptoSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { setSelectedAsset } from '@/store/features/cryptoSlice';
 import { CryptoAsset } from '@/utilities/types';
 import PriceTicker from '@/components/PriceTicker';
 import MarketInfo from './MarketInfo';

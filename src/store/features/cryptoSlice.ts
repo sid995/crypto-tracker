@@ -1,6 +1,6 @@
 import { CryptoAsset } from '@/utilities/types';
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
-import { RootState } from '@/Store/store';
+import { RootState } from '@/store/store';
 
 
 const assetsAdapter = createEntityAdapter<CryptoAsset>({
