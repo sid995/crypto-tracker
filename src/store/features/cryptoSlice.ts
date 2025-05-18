@@ -1,24 +1,61 @@
-import { CryptoAsset } from '@/utilities/types';
-import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
+import { CryptoAsset } from '@/libs/types';
+import { createSlice, createAsyncThunk, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
 import { RootState } from '@/store/store';
 
+export type SortField = 'rank' | 'priceUsd' | 'volumeUsd24Hr' | 'changePercent24Hr';
+export type SortDirection = 'asc' | 'desc';
 
 const assetsAdapter = createEntityAdapter<CryptoAsset>({
-  // selectId: (a: CryptoAsset) => a.id,
   sortComparer: (a, b) => Number(a.rank) - Number(b.rank),
 })
-
 
 const initialState = assetsAdapter.getInitialState({
   selectedAsset: null as CryptoAsset | null,
   loading: false,
   error: null as string | null,
+  sortField: 'rank' as SortField,
+  sortDirection: 'asc' as SortDirection,
+  filterValue: '' as string,
 })
+
+export const {
+  selectAll: selectAssets,
+  selectById: selectAssetById,
+  selectIds: selectAssetIds,
+} = assetsAdapter.getSelectors((s: RootState) => s.crypto);
+
+const selectFilterValue = (state: RootState) => state.crypto.filterValue;
+const selectSortField = (state: RootState) => state.crypto.sortField;
+const selectSortDirection = (state: RootState) => state.crypto.sortDirection;
+
+const selectFilteredAssets = createSelector(
+  [selectAssets, selectFilterValue],
+  (assets, filterValue) => {
+    if (!filterValue) return assets;
+    const searchTerm = filterValue.toLowerCase();
+    return assets.filter(asset =>
+      asset.name.toLowerCase().includes(searchTerm) ||
+      asset.symbol.toLowerCase().includes(searchTerm)
+    );
+  }
+);
+
+export const selectSortedAndFilteredAssets = createSelector(
+  [selectFilteredAssets, selectSortField, selectSortDirection],
+  (filteredAssets, sortField, sortDirection) => {
+    return [...filteredAssets].sort((a, b) => {
+      const aValue = parseFloat(a[sortField]);
+      const bValue = parseFloat(b[sortField]);
+      const multiplier = sortDirection === 'asc' ? 1 : -1;
+      return (aValue - bValue) * multiplier;
+    });
+  }
+);
 
 export const fetchAssets = createAsyncThunk(
   'crypto/fetchAssets',
   async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets?limit=20`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets?limit=20&t=${Date.now()}`, {
       headers: {
         'accept': 'application/json',
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`,
@@ -34,7 +71,7 @@ export const fetchAssets = createAsyncThunk(
 export const fetchAssetById = createAsyncThunk(
   'crypto/fetchAssetById',
   async (slug: string) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets/${slug}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_COINCAP_REST_ROUTE}/assets/${slug}?t=${Date.now()}`, {
       headers: {
         'accept': 'application/json',
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_COINCAP_KEY}`,
@@ -57,6 +94,17 @@ const cryptoSlice = createSlice({
     },
     setSelectedAsset: (state, { payload }: { payload: CryptoAsset | null }) => {
       state.selectedAsset = payload
+    },
+    setSortField: (state, { payload }: { payload: SortField }) => {
+      if (state.sortField === payload) {
+        state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sortField = payload;
+        state.sortDirection = 'asc';
+      }
+    },
+    setFilterValue: (state, { payload }: { payload: string }) => {
+      state.filterValue = payload;
     },
   },
   extraReducers: builder => {
@@ -91,14 +139,10 @@ const cryptoSlice = createSlice({
 })
 
 export const {
-  selectAll: selectAssets,
-  selectById: selectAssetById,
-  selectIds: selectAssetIds,
-} = assetsAdapter.getSelectors((s: RootState) => s.crypto)
-
-export const {
   setAssets,
   setSelectedAsset,
+  setSortField,
+  setFilterValue,
 } = cryptoSlice.actions
 
 export default cryptoSlice.reducer

@@ -1,4 +1,4 @@
-import { formatPrice, formatLargeNumber, formatPercentage } from '@/utilities/utils';
+import { formatPrice, formatLargeNumber, formatPercentage } from '@/libs/utils';
 
 describe('Utility Functions', () => {
   describe('formatPrice', () => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { formatPrice, formatPercentage } from '@/utilities/utils';
+import { formatPrice, formatPercentage } from '@/libs/utils';
 import { useAppSelector } from '@/store/hooks';
 
 

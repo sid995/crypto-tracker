@@ -1,6 +1,6 @@
 import { useAppSelector } from "@/store/hooks";
-import { CryptoAsset } from "@/utilities/types";
-import { formatLargeNumber, formatPercentage } from "@/utilities/utils";
+import { CryptoAsset } from "@/libs/types";
+import { formatLargeNumber, formatPercentage } from "@/libs/utils";
 
 
 export default function MarketInfo() {

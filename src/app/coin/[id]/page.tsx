@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 import CoinDetailContent from '@/components/CoinDetailContent';
-import { CryptoAsset } from '@/utilities/types';
+import { CryptoAsset } from '@/libs/types';
 
 export const revalidate = 5;
 

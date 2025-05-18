@@ -2,7 +2,7 @@
 
 import { selectAssetById } from '@/store/features/cryptoSlice';
 import { useAppSelector } from '@/store/hooks';
-import { formatPrice, formatPercentage, formatLargeNumber } from '@/utilities/utils';
+import { formatPrice, formatPercentage, formatLargeNumber } from '@/libs/utils';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
